@@ -1,0 +1,41 @@
+[
+  {
+    "objectno": "VH-001",
+    "objectname": "Inspector 01",
+    "objectgroupname": "Inspectors",
+    "driverid": "DR-1001",
+    "drivername": "Alice Smith",
+    "latitude": 42.8465,
+    "longitude": -2.6709,
+    "pos_time": "2025-09-18T10:31:00Z",
+    "speed": 38,
+    "course": 120,
+    "ignition": 1
+  },
+  {
+    "objectno": "VH-002",
+    "objectname": "Inspector 02",
+    "objectgroupname": "Inspectors",
+    "driverid": "DR-1002",
+    "drivername": "Bob Lopez",
+    "latitude": 42.8541,
+    "longitude": -2.6812,
+    "pos_time": "2025-09-18T10:30:10Z",
+    "speed": 0,
+    "course": 0,
+    "ignition": 0
+  },
+  {
+    "objectno": "VH-003",
+    "objectname": "Inspector 03",
+    "objectgroupname": "Inspectors",
+    "driverid": "DR-1003",
+    "drivername": "Carol Ruiz",
+    "latitude": 42.8422,
+    "longitude": -2.6597,
+    "pos_time": "2025-09-18T10:29:40Z",
+    "speed": 12,
+    "course": 305,
+    "ignition": 1
+  }
+]
