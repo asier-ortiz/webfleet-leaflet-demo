@@ -1,0 +1,1054 @@
+{
+  "info": {
+    "name": "WEBFLEET.connect CSV — URA (vehículos, conductores, viajes, paradas)",
+    "_postman_id": "0b851b38-e1b6-478a-8e76-9953e3a151e2",
+    "description": "Colección de endpoints HTTP CSV de WEBFLEET.connect para visor/mapa: objetos/vehículos, conductores, viajes/rutas, paradas, eventos, pedidos, geocoding y colas.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "{{base_url}}"
+    },
+    {
+      "key": "account",
+      "value": "{{account}}"
+    },
+    {
+      "key": "username",
+      "value": "{{username}}"
+    },
+    {
+      "key": "password",
+      "value": "{{password}}"
+    },
+    {
+      "key": "apikey",
+      "value": "{{apikey}}"
+    },
+    {
+      "key": "lang",
+      "value": "{{lang}}"
+    },
+    {
+      "key": "useISO8601",
+      "value": "{{useISO8601}}"
+    },
+    {
+      "key": "useUTF8",
+      "value": "{{useUTF8}}"
+    },
+    {
+      "key": "demo_objectno",
+      "value": "{{demo_objectno}}"
+    },
+    {
+      "key": "from",
+      "value": "{{from}}"
+    },
+    {
+      "key": "to",
+      "value": "{{to}}"
+    },
+    {
+      "key": "lat",
+      "value": "{{lat}}"
+    },
+    {
+      "key": "lon",
+      "value": "{{lon}}"
+    },
+    {
+      "key": "queuename",
+      "value": "{{queuename}}"
+    },
+    {
+      "key": "msgids",
+      "value": "{{msgids}}"
+    },
+    {
+      "key": "orderno",
+      "value": "{{orderno}}"
+    }
+  ],
+  "item": [
+    {
+      "name": "🔧 Utils",
+      "item": [
+        {
+          "name": "Ping credenciales (acción mínima: showObjectReportExtern)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}?account={{account}}&username={{username}}&password={{password}}&apikey={{apikey}}&lang={{lang}}&useISO8601={{useISO8601}}&useUTF8={{useUTF8}}&action=showObjectReportExtern",
+              "host": [
+                "{{base_url}}"
+              ],
+              "query": [
+                {
+                  "key": "account",
+                  "value": "{{account}}"
+                },
+                {
+                  "key": "username",
+                  "value": "{{username}}"
+                },
+                {
+                  "key": "password",
+                  "value": "{{password}}"
+                },
+                {
+                  "key": "apikey",
+                  "value": "{{apikey}}"
+                },
+                {
+                  "key": "lang",
+                  "value": "{{lang}}"
+                },
+                {
+                  "key": "useISO8601",
+                  "value": "{{useISO8601}}"
+                },
+                {
+                  "key": "useUTF8",
+                  "value": "{{useUTF8}}"
+                },
+                {
+                  "key": "action",
+                  "value": "showObjectReportExtern"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('CSV en cuerpo', () => pm.response.text().includes(';') || pm.response.text().includes(','));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "🚗 Objetos / Vehículos",
+      "item": [
+        {
+          "name": "showObjectReportExtern (todos / filtro por objectno)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}?account={{account}}&username={{username}}&password={{password}}&apikey={{apikey}}&lang={{lang}}&useISO8601={{useISO8601}}&useUTF8={{useUTF8}}&action=showObjectReportExtern&objectno={{demo_objectno}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "query": [
+                {
+                  "key": "account",
+                  "value": "{{account}}"
+                },
+                {
+                  "key": "username",
+                  "value": "{{username}}"
+                },
+                {
+                  "key": "password",
+                  "value": "{{password}}"
+                },
+                {
+                  "key": "apikey",
+                  "value": "{{apikey}}"
+                },
+                {
+                  "key": "lang",
+                  "value": "{{lang}}"
+                },
+                {
+                  "key": "useISO8601",
+                  "value": "{{useISO8601}}"
+                },
+                {
+                  "key": "useUTF8",
+                  "value": "{{useUTF8}}"
+                },
+                {
+                  "key": "action",
+                  "value": "showObjectReportExtern"
+                },
+                {
+                  "key": "objectno",
+                  "value": "{{demo_objectno}}"
+                }
+              ]
+            },
+            "description": "Reporte de objetos/vehículos (posición, velocidad, odómetro, ignición…)."
+          }
+        },
+        {
+          "name": "showVehicleReportExtern (detalles vehículo)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}?account={{account}}&username={{username}}&password={{password}}&apikey={{apikey}}&lang={{lang}}&useISO8601={{useISO8601}}&useUTF8={{useUTF8}}&action=showVehicleReportExtern&objectno={{demo_objectno}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "query": [
+                {
+                  "key": "account",
+                  "value": "{{account}}"
+                },
+                {
+                  "key": "username",
+                  "value": "{{username}}"
+                },
+                {
+                  "key": "password",
+                  "value": "{{password}}"
+                },
+                {
+                  "key": "apikey",
+                  "value": "{{apikey}}"
+                },
+                {
+                  "key": "lang",
+                  "value": "{{lang}}"
+                },
+                {
+                  "key": "useISO8601",
+                  "value": "{{useISO8601}}"
+                },
+                {
+                  "key": "useUTF8",
+                  "value": "{{useUTF8}}"
+                },
+                {
+                  "key": "action",
+                  "value": "showVehicleReportExtern"
+                },
+                {
+                  "key": "objectno",
+                  "value": "{{demo_objectno}}"
+                }
+              ]
+            },
+            "description": "Detalles/metadata del vehículo."
+          }
+        },
+        {
+          "name": "showNearestVehicles (búsqueda de cercanos)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}?account={{account}}&username={{username}}&password={{password}}&apikey={{apikey}}&lang={{lang}}&useISO8601={{useISO8601}}&useUTF8={{useUTF8}}&action=showNearestVehicles&latitude={{lat}}&longitude={{lon}}&maxResults=5",
+              "host": [
+                "{{base_url}}"
+              ],
+              "query": [
+                {
+                  "key": "account",
+                  "value": "{{account}}"
+                },
+                {
+                  "key": "username",
+                  "value": "{{username}}"
+                },
+                {
+                  "key": "password",
+                  "value": "{{password}}"
+                },
+                {
+                  "key": "apikey",
+                  "value": "{{apikey}}"
+                },
+                {
+                  "key": "lang",
+                  "value": "{{lang}}"
+                },
+                {
+                  "key": "useISO8601",
+                  "value": "{{useISO8601}}"
+                },
+                {
+                  "key": "useUTF8",
+                  "value": "{{useUTF8}}"
+                },
+                {
+                  "key": "action",
+                  "value": "showNearestVehicles"
+                },
+                {
+                  "key": "latitude",
+                  "value": "{{lat}}"
+                },
+                {
+                  "key": "longitude",
+                  "value": "{{lon}}"
+                },
+                {
+                  "key": "maxResults",
+                  "value": "5"
+                }
+              ]
+            },
+            "description": "Vehículos más cercanos a una lat/lon."
+          }
+        }
+      ]
+    },
+    {
+      "name": "🧑‍✈️ Conductores",
+      "item": [
+        {
+          "name": "showDriverReportExtern (todos / filtro)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}?account={{account}}&username={{username}}&password={{password}}&apikey={{apikey}}&lang={{lang}}&useISO8601={{useISO8601}}&useUTF8={{useUTF8}}&action=showDriverReportExtern",
+              "host": [
+                "{{base_url}}"
+              ],
+              "query": [
+                {
+                  "key": "account",
+                  "value": "{{account}}"
+                },
+                {
+                  "key": "username",
+                  "value": "{{username}}"
+                },
+                {
+                  "key": "password",
+                  "value": "{{password}}"
+                },
+                {
+                  "key": "apikey",
+                  "value": "{{apikey}}"
+                },
+                {
+                  "key": "lang",
+                  "value": "{{lang}}"
+                },
+                {
+                  "key": "useISO8601",
+                  "value": "{{useISO8601}}"
+                },
+                {
+                  "key": "useUTF8",
+                  "value": "{{useUTF8}}"
+                },
+                {
+                  "key": "action",
+                  "value": "showDriverReportExtern"
+                }
+              ]
+            },
+            "description": "Listado de conductores y estado básico."
+          }
+        }
+      ]
+    },
+    {
+      "name": "🗺️ Viajes y tiempos",
+      "item": [
+        {
+          "name": "showTripReportExtern (rango + objeto opcional)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}?account={{account}}&username={{username}}&password={{password}}&apikey={{apikey}}&lang={{lang}}&useISO8601={{useISO8601}}&useUTF8={{useUTF8}}&action=showTripReportExtern&from={{from}}&to={{to}}&objectno={{demo_objectno}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "query": [
+                {
+                  "key": "account",
+                  "value": "{{account}}"
+                },
+                {
+                  "key": "username",
+                  "value": "{{username}}"
+                },
+                {
+                  "key": "password",
+                  "value": "{{password}}"
+                },
+                {
+                  "key": "apikey",
+                  "value": "{{apikey}}"
+                },
+                {
+                  "key": "lang",
+                  "value": "{{lang}}"
+                },
+                {
+                  "key": "useISO8601",
+                  "value": "{{useISO8601}}"
+                },
+                {
+                  "key": "useUTF8",
+                  "value": "{{useUTF8}}"
+                },
+                {
+                  "key": "action",
+                  "value": "showTripReportExtern"
+                },
+                {
+                  "key": "from",
+                  "value": "{{from}}"
+                },
+                {
+                  "key": "to",
+                  "value": "{{to}}"
+                },
+                {
+                  "key": "objectno",
+                  "value": "{{demo_objectno}}"
+                }
+              ]
+            },
+            "description": "Historial de viajes (logbook) en un rango de fechas."
+          }
+        },
+        {
+          "name": "showTracks (trayectorias GPS detalladas)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}?account={{account}}&username={{username}}&password={{password}}&apikey={{apikey}}&lang={{lang}}&useISO8601={{useISO8601}}&useUTF8={{useUTF8}}&action=showTracks&objectno={{demo_objectno}}&from={{from}}&to={{to}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "query": [
+                {
+                  "key": "account",
+                  "value": "{{account}}"
+                },
+                {
+                  "key": "username",
+                  "value": "{{username}}"
+                },
+                {
+                  "key": "password",
+                  "value": "{{password}}"
+                },
+                {
+                  "key": "apikey",
+                  "value": "{{apikey}}"
+                },
+                {
+                  "key": "lang",
+                  "value": "{{lang}}"
+                },
+                {
+                  "key": "useISO8601",
+                  "value": "{{useISO8601}}"
+                },
+                {
+                  "key": "useUTF8",
+                  "value": "{{useUTF8}}"
+                },
+                {
+                  "key": "action",
+                  "value": "showTracks"
+                },
+                {
+                  "key": "objectno",
+                  "value": "{{demo_objectno}}"
+                },
+                {
+                  "key": "from",
+                  "value": "{{from}}"
+                },
+                {
+                  "key": "to",
+                  "value": "{{to}}"
+                }
+              ]
+            },
+            "description": "Puntos de track (lat, lon, velocidad, curso…)."
+          }
+        },
+        {
+          "name": "showWorkingTimes (tiempos de trabajo)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}?account={{account}}&username={{username}}&password={{password}}&apikey={{apikey}}&lang={{lang}}&useISO8601={{useISO8601}}&useUTF8={{useUTF8}}&action=showWorkingTimes&from={{from}}&to={{to}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "query": [
+                {
+                  "key": "account",
+                  "value": "{{account}}"
+                },
+                {
+                  "key": "username",
+                  "value": "{{username}}"
+                },
+                {
+                  "key": "password",
+                  "value": "{{password}}"
+                },
+                {
+                  "key": "apikey",
+                  "value": "{{apikey}}"
+                },
+                {
+                  "key": "lang",
+                  "value": "{{lang}}"
+                },
+                {
+                  "key": "useISO8601",
+                  "value": "{{useISO8601}}"
+                },
+                {
+                  "key": "useUTF8",
+                  "value": "{{useUTF8}}"
+                },
+                {
+                  "key": "action",
+                  "value": "showWorkingTimes"
+                },
+                {
+                  "key": "from",
+                  "value": "{{from}}"
+                },
+                {
+                  "key": "to",
+                  "value": "{{to}}"
+                }
+              ]
+            },
+            "description": "Estados/tiempos de trabajo por conductor/vehículo."
+          }
+        }
+      ]
+    },
+    {
+      "name": "⏹️ Paradas e inactividad",
+      "item": [
+        {
+          "name": "showStandStills (paradas en rango)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}?account={{account}}&username={{username}}&password={{password}}&apikey={{apikey}}&lang={{lang}}&useISO8601={{useISO8601}}&useUTF8={{useUTF8}}&action=showStandStills&objectno={{demo_objectno}}&from={{from}}&to={{to}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "query": [
+                {
+                  "key": "account",
+                  "value": "{{account}}"
+                },
+                {
+                  "key": "username",
+                  "value": "{{username}}"
+                },
+                {
+                  "key": "password",
+                  "value": "{{password}}"
+                },
+                {
+                  "key": "apikey",
+                  "value": "{{apikey}}"
+                },
+                {
+                  "key": "lang",
+                  "value": "{{lang}}"
+                },
+                {
+                  "key": "useISO8601",
+                  "value": "{{useISO8601}}"
+                },
+                {
+                  "key": "useUTF8",
+                  "value": "{{useUTF8}}"
+                },
+                {
+                  "key": "action",
+                  "value": "showStandStills"
+                },
+                {
+                  "key": "objectno",
+                  "value": "{{demo_objectno}}"
+                },
+                {
+                  "key": "from",
+                  "value": "{{from}}"
+                },
+                {
+                  "key": "to",
+                  "value": "{{to}}"
+                }
+              ]
+            },
+            "description": "Paradas (duración, ubicación)."
+          }
+        },
+        {
+          "name": "showIdleExceptions (ralentí excesivo)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}?account={{account}}&username={{username}}&password={{password}}&apikey={{apikey}}&lang={{lang}}&useISO8601={{useISO8601}}&useUTF8={{useUTF8}}&action=showIdleExceptions&from={{from}}&to={{to}}&objectno={{demo_objectno}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "query": [
+                {
+                  "key": "account",
+                  "value": "{{account}}"
+                },
+                {
+                  "key": "username",
+                  "value": "{{username}}"
+                },
+                {
+                  "key": "password",
+                  "value": "{{password}}"
+                },
+                {
+                  "key": "apikey",
+                  "value": "{{apikey}}"
+                },
+                {
+                  "key": "lang",
+                  "value": "{{lang}}"
+                },
+                {
+                  "key": "useISO8601",
+                  "value": "{{useISO8601}}"
+                },
+                {
+                  "key": "useUTF8",
+                  "value": "{{useUTF8}}"
+                },
+                {
+                  "key": "action",
+                  "value": "showIdleExceptions"
+                },
+                {
+                  "key": "from",
+                  "value": "{{from}}"
+                },
+                {
+                  "key": "to",
+                  "value": "{{to}}"
+                },
+                {
+                  "key": "objectno",
+                  "value": "{{demo_objectno}}"
+                }
+              ]
+            },
+            "description": "Excepciones de ralentí."
+          }
+        }
+      ]
+    },
+    {
+      "name": "🚨 Eventos",
+      "item": [
+        {
+          "name": "showEventReportExtern (eventos en rango)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}?account={{account}}&username={{username}}&password={{password}}&apikey={{apikey}}&lang={{lang}}&useISO8601={{useISO8601}}&useUTF8={{useUTF8}}&action=showEventReportExtern&from={{from}}&to={{to}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "query": [
+                {
+                  "key": "account",
+                  "value": "{{account}}"
+                },
+                {
+                  "key": "username",
+                  "value": "{{username}}"
+                },
+                {
+                  "key": "password",
+                  "value": "{{password}}"
+                },
+                {
+                  "key": "apikey",
+                  "value": "{{apikey}}"
+                },
+                {
+                  "key": "lang",
+                  "value": "{{lang}}"
+                },
+                {
+                  "key": "useISO8601",
+                  "value": "{{useISO8601}}"
+                },
+                {
+                  "key": "useUTF8",
+                  "value": "{{useUTF8}}"
+                },
+                {
+                  "key": "action",
+                  "value": "showEventReportExtern"
+                },
+                {
+                  "key": "from",
+                  "value": "{{from}}"
+                },
+                {
+                  "key": "to",
+                  "value": "{{to}}"
+                }
+              ]
+            },
+            "description": "Eventos (aceleraciones, frenadas, etc.)."
+          }
+        }
+      ]
+    },
+    {
+      "name": "📦 Pedidos (Orders)",
+      "item": [
+        {
+          "name": "showOrderReportExtern (pedidos en rango)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}?account={{account}}&username={{username}}&password={{password}}&apikey={{apikey}}&lang={{lang}}&useISO8601={{useISO8601}}&useUTF8={{useUTF8}}&action=showOrderReportExtern&from={{from}}&to={{to}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "query": [
+                {
+                  "key": "account",
+                  "value": "{{account}}"
+                },
+                {
+                  "key": "username",
+                  "value": "{{username}}"
+                },
+                {
+                  "key": "password",
+                  "value": "{{password}}"
+                },
+                {
+                  "key": "apikey",
+                  "value": "{{apikey}}"
+                },
+                {
+                  "key": "lang",
+                  "value": "{{lang}}"
+                },
+                {
+                  "key": "useISO8601",
+                  "value": "{{useISO8601}}"
+                },
+                {
+                  "key": "useUTF8",
+                  "value": "{{useUTF8}}"
+                },
+                {
+                  "key": "action",
+                  "value": "showOrderReportExtern"
+                },
+                {
+                  "key": "from",
+                  "value": "{{from}}"
+                },
+                {
+                  "key": "to",
+                  "value": "{{to}}"
+                }
+              ]
+            },
+            "description": "Pedidos y estados."
+          }
+        },
+        {
+          "name": "downloadOrderEpodSignature (ePOD: firma)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}?account={{account}}&username={{username}}&password={{password}}&apikey={{apikey}}&lang={{lang}}&action=downloadOrderEpodSignature&orderno={{orderno}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "query": [
+                {
+                  "key": "account",
+                  "value": "{{account}}"
+                },
+                {
+                  "key": "username",
+                  "value": "{{username}}"
+                },
+                {
+                  "key": "password",
+                  "value": "{{password}}"
+                },
+                {
+                  "key": "apikey",
+                  "value": "{{apikey}}"
+                },
+                {
+                  "key": "lang",
+                  "value": "{{lang}}"
+                },
+                {
+                  "key": "action",
+                  "value": "downloadOrderEpodSignature"
+                },
+                {
+                  "key": "orderno",
+                  "value": "{{orderno}}"
+                }
+              ]
+            },
+            "description": "Descarga de firma ePOD para un pedido."
+          }
+        }
+      ]
+    },
+    {
+      "name": "🧭 Geocoding & Routing",
+      "item": [
+        {
+          "name": "geocodeAddress (→ coordenadas desde dirección)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}?account={{account}}&username={{username}}&password={{password}}&apikey={{apikey}}&lang={{lang}}&action=geocodeAddress&addr=Puerta del Sol Madrid",
+              "host": [
+                "{{base_url}}"
+              ],
+              "query": [
+                {
+                  "key": "account",
+                  "value": "{{account}}"
+                },
+                {
+                  "key": "username",
+                  "value": "{{username}}"
+                },
+                {
+                  "key": "password",
+                  "value": "{{password}}"
+                },
+                {
+                  "key": "apikey",
+                  "value": "{{apikey}}"
+                },
+                {
+                  "key": "lang",
+                  "value": "{{lang}}"
+                },
+                {
+                  "key": "action",
+                  "value": "geocodeAddress"
+                },
+                {
+                  "key": "addr",
+                  "value": "Puerta del Sol Madrid"
+                }
+              ]
+            },
+            "description": "Geocodifica una dirección a lat/lon."
+          }
+        }
+      ]
+    },
+    {
+      "name": "📨 Colas (realtime)",
+      "item": [
+        {
+          "name": "createQueueExtern (crear cola de eventos)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}?account={{account}}&username={{username}}&password={{password}}&apikey={{apikey}}&lang={{lang}}&action=createQueueExtern&name={{queuename}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "query": [
+                {
+                  "key": "account",
+                  "value": "{{account}}"
+                },
+                {
+                  "key": "username",
+                  "value": "{{username}}"
+                },
+                {
+                  "key": "password",
+                  "value": "{{password}}"
+                },
+                {
+                  "key": "apikey",
+                  "value": "{{apikey}}"
+                },
+                {
+                  "key": "lang",
+                  "value": "{{lang}}"
+                },
+                {
+                  "key": "action",
+                  "value": "createQueueExtern"
+                },
+                {
+                  "key": "name",
+                  "value": "{{queuename}}"
+                }
+              ]
+            },
+            "description": "Crea una cola para eventos."
+          }
+        },
+        {
+          "name": "popQueueMessagesExtern (leer mensajes)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}?account={{account}}&username={{username}}&password={{password}}&apikey={{apikey}}&lang={{lang}}&action=popQueueMessagesExtern&name={{queuename}}&max=100",
+              "host": [
+                "{{base_url}}"
+              ],
+              "query": [
+                {
+                  "key": "account",
+                  "value": "{{account}}"
+                },
+                {
+                  "key": "username",
+                  "value": "{{username}}"
+                },
+                {
+                  "key": "password",
+                  "value": "{{password}}"
+                },
+                {
+                  "key": "apikey",
+                  "value": "{{apikey}}"
+                },
+                {
+                  "key": "lang",
+                  "value": "{{lang}}"
+                },
+                {
+                  "key": "action",
+                  "value": "popQueueMessagesExtern"
+                },
+                {
+                  "key": "name",
+                  "value": "{{queuename}}"
+                },
+                {
+                  "key": "max",
+                  "value": "100"
+                }
+              ]
+            },
+            "description": "Extrae mensajes de la cola."
+          }
+        },
+        {
+          "name": "ackQueueMessagesExtern (ack de mensajes)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}?account={{account}}&username={{username}}&password={{password}}&apikey={{apikey}}&lang={{lang}}&action=ackQueueMessagesExtern&name={{queuename}}&msgids={{msgids}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "query": [
+                {
+                  "key": "account",
+                  "value": "{{account}}"
+                },
+                {
+                  "key": "username",
+                  "value": "{{username}}"
+                },
+                {
+                  "key": "password",
+                  "value": "{{password}}"
+                },
+                {
+                  "key": "apikey",
+                  "value": "{{apikey}}"
+                },
+                {
+                  "key": "lang",
+                  "value": "{{lang}}"
+                },
+                {
+                  "key": "action",
+                  "value": "ackQueueMessagesExtern"
+                },
+                {
+                  "key": "name",
+                  "value": "{{queuename}}"
+                },
+                {
+                  "key": "msgids",
+                  "value": "{{msgids}}"
+                }
+              ]
+            },
+            "description": "Confirma recepción de mensajes."
+          }
+        },
+        {
+          "name": "deleteQueueExtern (eliminar cola)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}?account={{account}}&username={{username}}&password={{password}}&apikey={{apikey}}&lang={{lang}}&action=deleteQueueExtern&name={{queuename}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "query": [
+                {
+                  "key": "account",
+                  "value": "{{account}}"
+                },
+                {
+                  "key": "username",
+                  "value": "{{username}}"
+                },
+                {
+                  "key": "password",
+                  "value": "{{password}}"
+                },
+                {
+                  "key": "apikey",
+                  "value": "{{apikey}}"
+                },
+                {
+                  "key": "lang",
+                  "value": "{{lang}}"
+                },
+                {
+                  "key": "action",
+                  "value": "deleteQueueExtern"
+                },
+                {
+                  "key": "name",
+                  "value": "{{queuename}}"
+                }
+              ]
+            },
+            "description": "Elimina una cola."
+          }
+        }
+      ]
+    }
+  ]
+}
