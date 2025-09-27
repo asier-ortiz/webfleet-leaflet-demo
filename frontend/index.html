@@ -15,7 +15,11 @@
 <body>
 <header>
     <h1>Fleet map (WEBFLEET.connect)</h1>
-    <div class="controls">
+    <nav class="tabs">
+        <button class="tab active" data-tab="live">Live</button>
+        <button class="tab" data-tab="tracks">Recorridos</button>
+    </nav>
+    <div class="controls" id="controls-live">
         <button id="refreshBtn">Refresh</button>
         <label>
             Auto-refresh:
@@ -28,16 +32,22 @@
         </label>
         <span id="status"></span>
     </div>
+    <div class="controls hidden" id="controls-tracks">
+        <label>
+            Vehículo/Conductor:
+            <select id="vehicleSelect"><option value="">Cargando…</option></select>
+        </label>
+        <button id="showTrackBtn">Mostrar recorrido (últimos 7 días)</button>
+        <button id="clearTrackBtn">Limpiar</button>
+        <span id="trackStatus"></span>
+    </div>
 </header>
 
-<div id="map"></div>
+<div id="map-live"></div>
+<div id="map-tracks" class="hidden"></div>
+<div id="legend" class="legend"></div>
 
-<footer>
-    <p>
-        Front-end demo using <strong>Leaflet</strong>. Data comes from
-        <code>/api/fleet</code> (backend proxy). No credentials exposed to the browser.
-    </p>
-</footer>
+<footer></footer>
 
 <script
         src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
