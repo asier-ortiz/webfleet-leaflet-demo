@@ -14,7 +14,7 @@
 </head>
 <body>
 <header>
-    <h1>Fleet map (WEBFLEET.connect)</h1>
+    <h1>Fleet map</h1>
     <nav class="tabs">
         <button class="tab active" data-tab="live">Live</button>
         <button class="tab" data-tab="tracks">Recorridos</button>
@@ -37,7 +37,16 @@
             Vehículo/Conductor:
             <select id="vehicleSelect"><option value="">Cargando…</option></select>
         </label>
-        <button id="showTrackBtn">Mostrar recorrido (últimos 7 días)</button>
+        <label>
+            Rango:
+            <select id="presetSelect">
+                <option value="today">Hoy</option>
+                <option value="yesterday">Ayer</option>
+                <option value="last7" selected>Últimos 7 días</option>
+                <option value="week_current">Semana actual</option>
+            </select>
+        </label>
+        <button id="showTrackBtn">Mostrar</button>
         <button id="clearTrackBtn">Limpiar</button>
         <span id="trackStatus"></span>
     </div>
@@ -45,7 +54,6 @@
 
 <div id="map-live"></div>
 <div id="map-tracks" class="hidden"></div>
-<div id="legend" class="legend"></div>
 
 <footer></footer>
 

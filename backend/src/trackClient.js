@@ -106,11 +106,13 @@ export async function getVehicleTrack({ objectno, from, to, preset }) {
   // 1) Presets using range_pattern
   if (!from || !to) {
     const p = preset || "today";
+
     if (p === "today") {
       const raw = await callShowTracksPattern({ objectno, pattern: "d0" });
       if (raw?.errorCode) return raw;
       return { objectno, from: toISO(new Date(new Date().setHours(0,0,0,0))), to: toISO(new Date()), points: mapPoints(raw) };
     }
+
     if (p === "yesterday") {
       const raw = await callShowTracksPattern({ objectno, pattern: "d-1" });
       if (raw?.errorCode) return raw;
@@ -120,6 +122,7 @@ export async function getVehicleTrack({ objectno, from, to, preset }) {
       const end = new Date(d.getTime() - 1);
       return { objectno, from: toISO(start), to: toISO(end), points: mapPoints(raw) };
     }
+
     if (p === "last7") {
       // Iterate d-0..d-6 and merge
       let all = [];
@@ -134,6 +137,28 @@ export async function getVehicleTrack({ objectno, from, to, preset }) {
       const start = new Date(end.getTime() - 7*24*60*60*1000);
       return { objectno, from: toISO(start), to: toISO(end), points: all };
     }
+
+    if (p === "week_current") {
+      // Compute Monday (start of week) in local time
+      const now = new Date();
+      const base = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      const day = base.getDay(); // 0=Sun,1=Mon,...
+      const diff = (day === 0 ? -6 : 1 - day); // move to Monday
+      const start = new Date(base);
+      start.setDate(base.getDate() + diff);
+      // Number of days from start of week up to today
+      const days = Math.floor((base - start) / (24*60*60*1000)) + 1;
+      let all = [];
+      for (let i = 0; i < days; i++) {
+        const pat = i === 0 ? "d0" : `d-${i}`;
+        const raw = await callShowTracksPattern({ objectno, pattern: pat });
+        if (raw?.errorCode) return raw;
+        all = all.concat(mapPoints(raw));
+      }
+      return { objectno, from: toISO(start), to: toISO(new Date()), points: all };
+    }
+
+
     // Default fallback to today
     const raw = await callShowTracksPattern({ objectno, pattern: "d0" });
     if (raw?.errorCode) return raw;

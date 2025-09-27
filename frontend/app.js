@@ -157,7 +157,7 @@ function setTab(name) {
     tabs.forEach(t => t.classList.toggle('active', t.dataset.tab === name));
     if (liveControls) liveControls.classList.toggle('hidden', name !== 'live');
     if (tracksControls) tracksControls.classList.toggle('hidden', name !== 'tracks');
-    if (legend) legend.textContent = name === 'tracks' ? 'Leyenda: azul = recorrido, verde = inicio, rojo = fin' : '';
+    if (legend) legend.textContent = name === 'tracks' ? 'Leyenda: colores por día. Haz clic en una línea para ver el día.' : '';
     const mapLiveEl = document.getElementById('map-live');
     const mapTracksEl = document.getElementById('map-tracks');
     if (mapLiveEl && mapTracksEl) {
@@ -174,6 +174,7 @@ tabs.forEach(t => t.addEventListener('click', () => setTab(t.dataset.tab)));
 
 // Tracks controls elements
 const vehicleSelect = document.getElementById('vehicleSelect');
+const presetSelect = document.getElementById('presetSelect');
 const showTrackBtn = document.getElementById('showTrackBtn');
 const clearTrackBtn = document.getElementById('clearTrackBtn');
 const trackStatus = document.getElementById('trackStatus');
@@ -194,15 +195,43 @@ async function populateVehicleSelect() {
 }
 
 
-function drawTrack(points) {
-    if (!points?.length) return;
-    const latlngs = points.map(p => [p.lat, p.lon]);
-    const line = L.polyline(latlngs, { color: '#0b82ff', weight: 4, opacity: 0.85 }).addTo(trackLayer);
-    L.circleMarker(latlngs[0], { radius: 5, color: 'green', fillColor: 'green', fillOpacity: 1 })
-      .addTo(trackLayer).bindPopup('Inicio');
-    L.circleMarker(latlngs[latlngs.length-1], { radius: 5, color: 'red', fillColor: 'red', fillOpacity: 1 })
-      .addTo(trackLayer).bindPopup('Fin');
-    MAP.fitBounds(line.getBounds(), { padding: [30, 30] });
+const DAY_COLORS = ['#0b82ff', '#7b1fa2', '#00897b', '#ef6c00', '#c2185b', '#5d4037', '#455a64'];
+
+function ymdLocal(d) {
+    const dt = d instanceof Date ? d : new Date(d);
+    const y = dt.getFullYear();
+    const m = String(dt.getMonth()+1).padStart(2,'0');
+    const day = String(dt.getDate()).padStart(2,'0');
+    return `${y}-${m}-${day}`;
+}
+
+function drawTracksAndStops(points) {
+    // Group points by local date (if any)
+    const byDay = new Map();
+    for (const p of points) {
+      const key = ymdLocal(p.time);
+      if (!byDay.has(key)) byDay.set(key, []);
+      byDay.get(key).push(p);
+    }
+    const bounds = [];
+    let idx = 0;
+    for (const [day, list] of byDay) {
+      const color = DAY_COLORS[idx % DAY_COLORS.length];
+      const latlngs = list.map(p => [p.lat, p.lon]);
+      const line = L.polyline(latlngs, { color, weight: 4, opacity: 0.9 }).addTo(trackLayer);
+      // Bind popup/click to show which day this polyline belongs to
+      const title = `Día ${day} · ${list.length} puntos`;
+      line.bindPopup(title);
+      line.on('click', (e) => {
+        // Open the popup at clicked point
+        line.openPopup(e.latlng);
+      });
+      const b = line.getBounds();
+      if (b.isValid()) { bounds.push(b.getSouthWest(), b.getNorthEast()); }
+      idx++;
+    }
+
+    if (bounds.length) MAP_TRACKS.fitBounds(L.latLngBounds(bounds), { padding: [30,30] });
 }
 
 
@@ -212,21 +241,24 @@ async function showTrackFromUI() {
     if (!objectno) { if (trackStatus) trackStatus.textContent = 'Elige un vehículo'; return; }
     const url = new URL('/api/tracks', window.location.origin);
     url.searchParams.set('objectno', objectno);
-    // Fixed range: últimos 7 días (last7)
-    url.searchParams.set('preset', 'last7');
+    const preset = (presetSelect && presetSelect.value) ? presetSelect.value : 'last7';
+    url.searchParams.set('preset', preset);
 
-    if (trackStatus) trackStatus.textContent = 'Cargando recorrido (últimos 7 días)…';
+    const presetLabel = (presetSelect && presetSelect.options[presetSelect.selectedIndex]?.text) || 'Últimos 7 días';
+    if (trackStatus) trackStatus.textContent = `Cargando recorrido (${presetLabel})…`;
     try {
         const res = await fetch(url);
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = await res.json();
         clearTrack();
-        if (!data.points || !data.points.length) {
+        const points = data.points || [];
+
+        if (!points.length) {
             if (trackStatus) trackStatus.textContent = 'Sin puntos en el rango';
             return;
         }
-        drawTrack(data.points);
-        if (trackStatus) trackStatus.textContent = `Puntos: ${data.points.length}`;
+        drawTracksAndStops(points);
+        if (trackStatus) trackStatus.textContent = `Puntos: ${points.length}`;
     } catch (e) {
         if (trackStatus) trackStatus.textContent = 'Error cargando recorrido';
         console.error(e);
