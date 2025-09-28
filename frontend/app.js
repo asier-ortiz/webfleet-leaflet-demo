@@ -129,9 +129,9 @@ async function fetchFleet() {
         if (data.error) throw new Error(JSON.stringify(data.error));
         return normalizeItems(data);
     } catch (err) {
-        console.warn("Backend failed, using sample. Reason:", err.message);
-        const sample = await (await fetch("./samples/sample_object_report.json")).json();
-        return normalizeItems(sample);
+        console.warn("Backend request failed:", err?.message || err);
+        // On error, return an empty list so the UI can show "No data".
+        return [];
     }
 }
 
