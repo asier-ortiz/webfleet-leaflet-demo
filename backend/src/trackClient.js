@@ -1,44 +1,4 @@
-import fetch from "node-fetch";
-
-// Convert million-degrees (micro degrees) to decimal degrees
-function mdegToDeg(mdeg) {
-  if (mdeg == null) return undefined;
-  const n = Number(mdeg);
-  return Number.isFinite(n) ? n / 1_000_000 : undefined;
-}
-
-// Heuristic: accept either decimal degrees or microdegrees in latitude/longitude
-function toDegrees({ dec, mdeg }) {
-  if (mdeg != null && Number.isFinite(Number(mdeg))) return Number(mdeg) / 1_000_000;
-  if (dec == null || !Number.isFinite(Number(dec))) return undefined;
-  const n = Number(dec);
-  return Math.abs(n) > 180 ? n / 1_000_000 : n;
-}
-
-// Format Date to Webfleet UD string depending on lang. We'll force lang=en here.
-function toUdStringUTC(date) {
-  const d = date instanceof Date ? date : new Date(date);
-  const pad = (n) => String(n).padStart(2, "0");
-  const Y = d.getUTCFullYear();
-  const M = pad(d.getUTCMonth() + 1);
-  const D = pad(d.getUTCDate());
-  const h = pad(d.getUTCHours());
-  const m = pad(d.getUTCMinutes());
-  const s = pad(d.getUTCSeconds());
-  // lang=en: dd/MM/yyyy HH:mm:ss
-  return `${D}/${M}/${Y} ${h}:${m}:${s}`;
-}
-
-function toISO(dt) {
-  const d = dt instanceof Date ? dt : new Date(dt);
-  return new Date(d.getTime() - d.getMilliseconds()).toISOString().replace(/\.\d{3}Z$/, "Z");
-}
-
-async function callWebfleet(url) {
-  const res = await fetch(url.toString());
-  if (!res.ok) throw new Error(`HTTP ${res.status}`);
-  return res.json();
-}
+import { buildBaseUrl, callWebfleet, toDegrees, toISO, toUdStringUTC } from "./lib/webfleetUtils.js";
 
 function mapPoints(raw) {
   const list = Array.isArray(raw?.report) ? raw.report : Array.isArray(raw) ? raw : [];
@@ -59,20 +19,6 @@ function mapPoints(raw) {
   return points;
 }
 
-function buildBaseUrl(action) {
-  const url = new URL(process.env.API_BASE);
-  url.searchParams.set("action", action);
-  url.searchParams.set("account", process.env.WEBFLEET_ACCOUNT);
-  url.searchParams.set("apikey", process.env.WEBFLEET_APIKEY);
-  url.searchParams.set("username", process.env.WEBFLEET_USERNAME);
-  url.searchParams.set("password", process.env.WEBFLEET_PASSWORD);
-  url.searchParams.set("outputformat", "json");
-  url.searchParams.set("lang", process.env.WEBFLEET_LANG || "en");
-  url.searchParams.set("useISO8601", "true");
-  url.searchParams.set("useUTF8", "true");
-  url.searchParams.set("useMerdeg", "true");
-  return url;
-}
 
 async function callShowTracksPattern({ objectno, pattern }) {
   const url = buildBaseUrl("showTracks");

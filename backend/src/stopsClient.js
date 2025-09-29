@@ -1,37 +1,4 @@
-import fetch from "node-fetch";
-
-function toDegrees({ dec, mdeg }) {
-  if (mdeg != null && Number.isFinite(Number(mdeg))) return Number(mdeg) / 1_000_000;
-  if (dec == null || !Number.isFinite(Number(dec))) return undefined;
-  const n = Number(dec);
-  return Math.abs(n) > 180 ? n / 1_000_000 : n;
-}
-
-function toISO(dt) {
-  const d = dt instanceof Date ? dt : new Date(dt);
-  return new Date(d.getTime() - d.getMilliseconds()).toISOString().replace(/\.\d{3}Z$/, "Z");
-}
-
-function buildBaseUrl(action) {
-  const url = new URL(process.env.API_BASE);
-  url.searchParams.set("action", action);
-  url.searchParams.set("account", process.env.WEBFLEET_ACCOUNT);
-  url.searchParams.set("apikey", process.env.WEBFLEET_APIKEY);
-  url.searchParams.set("username", process.env.WEBFLEET_USERNAME);
-  url.searchParams.set("password", process.env.WEBFLEET_PASSWORD);
-  url.searchParams.set("outputformat", "json");
-  url.searchParams.set("lang", process.env.WEBFLEET_LANG || "en");
-  url.searchParams.set("useISO8601", "true");
-  url.searchParams.set("useUTF8", "true");
-  url.searchParams.set("useMerdeg", "true");
-  return url;
-}
-
-async function callWebfleet(url) {
-  const res = await fetch(url.toString());
-  if (!res.ok) throw new Error(`HTTP ${res.status}`);
-  return res.json();
-}
+import { buildBaseUrl, callWebfleet, toDegrees, toISO, startOfWeekLocal, splitRangeIntoWindows } from "./lib/webfleetUtils.js";
 
 async function callShowStopsUd({ objectno, from, to }) {
   const url = buildBaseUrl("showStops");
@@ -68,15 +35,6 @@ function mapStops(raw) {
   return stops;
 }
 
-function startOfWeekLocal(d) {
-  const base = new Date(d.getFullYear(), d.getMonth(), d.getDate());
-  const day = base.getDay(); // 0=Sun,1=Mon,...
-  const diff = (day === 0 ? -6 : 1 - day);
-  const start = new Date(base);
-  start.setDate(base.getDate() + diff);
-  start.setHours(0,0,0,0);
-  return start;
-}
 
 export async function getVehicleStops({ objectno, from, to, preset }) {
   if (!objectno) throw new Error("objectno is required");
@@ -104,15 +62,8 @@ export async function getVehicleStops({ objectno, from, to, preset }) {
     }
   }
 
-  // Split into <= 48h windows
-  const TWO_DAYS_MS = 2 * 24 * 60 * 60 * 1000;
-  const windows = [];
-  let cursor = new Date(start);
-  while (cursor < end) {
-    const next = new Date(Math.min(cursor.getTime() + TWO_DAYS_MS, end.getTime()));
-    windows.push({ from: new Date(cursor), to: new Date(next) });
-    cursor = new Date(next.getTime() + 1000); // step to avoid overlap
-  }
+  // Split into <= 48h windows using shared helper
+  const windows = splitRangeIntoWindows(start, end);
 
   let all = [];
   for (const w of windows) {
