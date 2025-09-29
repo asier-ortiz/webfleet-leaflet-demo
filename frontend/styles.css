@@ -75,3 +75,9 @@ select {
 @media (max-width: 640px) {
   #map-live, #map-tracks { top: 180px; }
 }
+
+/* Vehicle marker colors by ignition */
+.veh-icon { width: 18px; height: 18px; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 0 0 1px rgba(0,0,0,.3); }
+.veh-icon.on { background: #22c55e; /* green */ }
+.veh-icon.off { background: #FF6666; /* red */ }
+.veh-icon.unk { background: #f59e0b; /* amber for unknown */ }

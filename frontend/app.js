@@ -14,8 +14,26 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 MAP_TRACKS.setView([42.846, -2.671], 12);
 
 // Layers: markers live on MAP_LIVE, tracks on MAP_TRACKS
-let markersLayer = L.layerGroup().addTo(MAP_LIVE);
+let markersLayer = L.markerClusterGroup({
+    showCoverageOnHover: false,
+    spiderfyOnEveryZoom: false,
+    removeOutsideVisibleBounds: true,
+    maxClusterRadius: 60,
+    disableClusteringAtZoom: 17
+}).addTo(MAP_LIVE);
 let trackLayer = L.layerGroup().addTo(MAP_TRACKS);
+
+// Simple colored dot icons depending on ignition state
+const vehicleIcons = {
+    on: L.divIcon({ className: 'veh-icon on', iconSize: [18, 18], iconAnchor: [9, 9] }),
+    off: L.divIcon({ className: 'veh-icon off', iconSize: [18, 18], iconAnchor: [9, 9] }),
+    unk: L.divIcon({ className: 'veh-icon unk', iconSize: [18, 18], iconAnchor: [9, 9] }),
+};
+function getIgnitionIcon(ign) {
+    if (ign === true || ign === 1) return vehicleIcons.on;
+    if (ign === false || ign === 0) return vehicleIcons.off;
+    return vehicleIcons.unk;
+}
 
 let autoTimer = null;
 
@@ -115,7 +133,7 @@ function plotVehicles(items) {
       ${odoLine}
       <small>${age}${gpsTxt ? ` · GPS: ${gpsTxt}` : ''}</small>
     `;
-        L.marker([v.lat, v.lon]).addTo(markersLayer).bindPopup(popup);
+        L.marker([v.lat, v.lon], { icon: getIgnitionIcon(v.ignition) }).addTo(markersLayer).bindPopup(popup);
         bounds.push([v.lat, v.lon]);
     }
     if (bounds.length) MAP_LIVE.fitBounds(bounds, {padding: [30, 30]});
