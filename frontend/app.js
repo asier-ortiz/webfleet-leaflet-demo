@@ -23,6 +23,12 @@ let markersLayer = L.markerClusterGroup({
 }).addTo(MAP_LIVE);
 let trackLayer = L.layerGroup().addTo(MAP_TRACKS);
 
+// Auto-fit behavior flags for Live map
+let hasFittedLive = false; // option 1: fit only the first time
+let autoFitLive = true;    // option 3: disable after user interaction
+// Disable auto-fit when the user starts controlling the map
+MAP_LIVE.on('zoomstart dragstart', () => { autoFitLive = false; });
+
 // Simple colored dot icons depending on ignition state
 const vehicleIcons = {
     on: L.divIcon({ className: 'veh-icon on', iconSize: [18, 18], iconAnchor: [9, 9] }),
@@ -101,7 +107,7 @@ function clearTrack() { trackLayer.clearLayers(); }
 
 function plotVehicles(items) {
     clearMarkers();
-    const bounds = [];
+    const boundsArr = [];
     for (const v of items) {
         const headingTxt = Number.isFinite(v.course) ? `${v.course}°` : '—';
         const speedTxt = Number.isFinite(v.speed) ? `${v.speed} km/h` : '—';
@@ -134,9 +140,28 @@ function plotVehicles(items) {
       <small>${age}${gpsTxt ? ` · GPS: ${gpsTxt}` : ''}</small>
     `;
         L.marker([v.lat, v.lon], { icon: getIgnitionIcon(v.ignition) }).addTo(markersLayer).bindPopup(popup);
-        bounds.push([v.lat, v.lon]);
+        boundsArr.push([v.lat, v.lon]);
     }
-    if (bounds.length) MAP_LIVE.fitBounds(bounds, {padding: [30, 30]});
+
+    if (!boundsArr.length) return;
+
+    // Option 2: only auto-fit if new markers fall outside current view
+    const newBounds = L.latLngBounds(boundsArr);
+    const current = MAP_LIVE.getBounds();
+
+    let shouldFit = false;
+    // Option 1: always fit the first time we plot vehicles
+    if (!hasFittedLive) {
+        shouldFit = true;
+    } else if (autoFitLive && (!current.isValid() || !current.contains(newBounds))) {
+        // Option 2 + 3: only if outside current view AND auto-fit not disabled by user interaction
+        shouldFit = true;
+    }
+
+    if (shouldFit) {
+        MAP_LIVE.fitBounds(newBounds, { padding: [30, 30] });
+        hasFittedLive = true;
+    }
 }
 
 async function fetchFleet() {

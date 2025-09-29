@@ -62,8 +62,15 @@ export async function getVehicleStops({ objectno, from, to, preset }) {
     }
   }
 
-  // Split into <= 48h windows using shared helper
-  const windows = splitRangeIntoWindows(start, end);
+  // Split into <= 48h windows
+  const TWO_DAYS_MS = 2 * 24 * 60 * 60 * 1000;
+  const windows = [];
+  let cursor = new Date(start);
+  while (cursor < end) {
+    const next = new Date(Math.min(cursor.getTime() + TWO_DAYS_MS, end.getTime()));
+    windows.push({ from: new Date(cursor), to: new Date(next) });
+    cursor = new Date(next.getTime() + 1000); // step to avoid overlap
+  }
 
   let all = [];
   for (const w of windows) {
